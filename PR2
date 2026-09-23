@@ -1,0 +1,155 @@
+namespace PR2
+{
+    internal class Program
+    {
+        static void Main(string[] args)
+        {
+            Random random =  new Random();
+            int group = random.Next(3, 6);
+            int[][] arr4 = new int[group][];
+            
+            for (int b = 0; b < arr4.Length; b++)
+            {
+                int students = random.Next(10, 31);
+                arr4[b] = new int[students];
+            }
+
+            for (int i = 0; i < arr4.Length; i++)
+            {
+                for (int j = 0; j < arr4[i].Length; j++)
+                {
+                    arr4[i][j] = random.Next(1, 13);
+                }
+            }
+            
+            for (int i = 0; i < arr4.Length; i++)
+            {
+                Console.Write($"Група {i + 1}: ");
+
+                for (int j = 0; j < arr4[i].Length; j++)
+                {
+                    Console.Write($"Student-{j} mark:{arr4[i][j] + " "}");
+                }
+
+                Console.WriteLine();
+            }
+            
+            for (int i = 0; i < arr4.Length; i++)
+            {
+                int sum = 0;
+                int min = arr4[i][0];
+                int max = arr4[i][0];
+
+                for (int j = 0; j < arr4[i].Length; j++)
+                {
+                    sum += arr4[i][j];
+
+                    if (arr4[i][j] < min)
+                    {
+                        min = arr4[i][j];
+                    }
+
+                    if (arr4[i][j] > max)
+                    {
+                        max = arr4[i][j];
+                    }
+                }
+
+                double average = (double)sum / arr4[i].Length;
+
+                Console.WriteLine($"Group {i + 1}:");
+                Console.WriteLine($"Average mark: {average:F2}");
+                Console.WriteLine($"Min mark: {min}");
+                Console.WriteLine($"Max mark: {max}");
+            }
+            
+            int totalSum = 0;
+            int totalStudents = 0;
+            int totalMin = arr4[0][0];
+            int totalMax = arr4[0][0];
+
+            for (int i = 0; i < arr4.Length; i++)
+            {
+                int sum = 0;
+                int min = arr4[i][0];
+                int max = arr4[i][0];
+
+                for (int j = 0; j < arr4[i].Length; j++)
+                {
+                    int mark = arr4[i][j];
+
+                    sum += mark;
+
+                    if (mark < min)
+                        min = mark;
+
+                    if (mark > max)
+                        max = mark;
+
+                    // Для всього потоку
+                    totalSum += mark;
+                    totalStudents++;
+
+                    if (mark < totalMin)
+                        totalMin = mark;
+
+                    if (mark > totalMax)
+                        totalMax = mark;
+                }
+
+                double average = (double)sum / arr4[i].Length;
+
+                Console.WriteLine($"Group {i + 1}:");
+                Console.WriteLine($"Average mark: {average:F2}");
+                Console.WriteLine($"Min mark: {min}");
+                Console.WriteLine($"Max mark: {max}");
+                Console.WriteLine();
+            }
+
+            double totalAverage = (double)totalSum / totalStudents;
+
+            Console.WriteLine("===== Whole course =====");
+            Console.WriteLine($"Average mark: {totalAverage:F2}");
+            Console.WriteLine($"Min mark: {totalMin}");
+            Console.WriteLine($"Max mark: {totalMax}");
+            
+            // // одновимірний масив
+            // int[] arr = new int[3];
+            //
+            // // двовимірний масим
+            // int[,] arr2 = new int[2,2];
+            //
+            // // зубчасті масиви
+            //
+            // int[][] arr3 = new int[3][];
+            //
+            // arr3[0] = new int[2];
+            // arr3[1] = new int[3];
+            // arr3[2] = new int[1];
+            //
+            // //for(int i=0; i < arr3.Length; i++)
+            // //{
+            // //    arr3[i] = new int[random.Next(2,3)];
+            // //}
+            //
+            // for (int i = 0; i < arr3.Length; i++)
+            // {
+            //     for (int j = 0; j < arr3[i].Length; j++)
+            //     {                         //[1, 21)
+            //         arr3[i][j] = random.Next(1, 20);
+            //     }
+            // }
+            //
+            // for (int i = 0; i < arr3.Length; i++)
+            // {
+            //     for (int j = 0; j < arr3[i].Length; j++)
+            //     {
+            //         Console.Write($"{arr3[i][j]} ");
+            //     }
+            //     Console.WriteLine();
+            // }
+
+
+        }
+    }
+}
