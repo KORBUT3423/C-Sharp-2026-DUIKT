@@ -1,0 +1,231 @@
+
+using System;
+
+class Hunter
+{
+    // Інкапсуляція: дані захищені від прямої зміни
+    public string Name { get; private set; }
+    public int Health { get; private set; }
+    public int Gold { get; private set; }
+    public int Arrows { get; private set; }
+    public int Prey { get; private set; }
+
+    public Hunter(string name, int health, int gold, int arrows)
+    {
+        Name = name;
+        Health = health;
+        Gold = gold;
+        Arrows = arrows;
+        Prey = 0;
+    }
+
+    // Метод полювання
+    public void Hunt(Random random)
+    {
+        if (Health <= 0)
+        {
+            Console.WriteLine($"{Name} не може полювати: немає здоров'я!");
+            return;
+        }
+
+        if (Arrows <= 0)
+        {
+            Console.WriteLine($"{Name} не може полювати: немає стріл!");
+            return;
+        }
+
+        Arrows--;
+
+        Console.WriteLine($"\n{Name} вирушає на полювання...");
+
+        // Випадковий результат полювання
+        bool success = random.Next(100) < 30;
+
+        if (success)
+        {
+            int reward = random.Next(10, 31);
+            Prey++;
+
+            Gold += reward;
+
+            Console.WriteLine("Полювання успішне!");
+            Console.WriteLine("Здобуто одну одиницю здобичі.");
+            Console.WriteLine($"Отримано золота: {reward}");
+        }
+        else
+        {
+            int damage = random.Next(5, 21);
+
+            Console.WriteLine($"Здоров'я до отримання шкоди: {Health}");
+
+            Health = Math.Max(0, Health - damage);
+
+            Console.WriteLine("Полювання невдале!");
+            Console.WriteLine($"Отримано шкоди: {damage}");
+            Console.WriteLine($"Здоров'я після отримання шкоди: {Health}");
+        }
+    }
+
+    // Метод купівлі стріл
+    public void BuyArrows()
+    {
+        const int price = 5;
+        const int amount = 5;
+
+        if (Health <= 0)
+        {
+            Console.WriteLine($"{Name} не може купувати стріли: мисливець вибув.");
+            return;
+        }
+
+        if (Gold < price)
+        {
+            Console.WriteLine("Недостатньо золота для купівлі стріл!");
+            return;
+        }
+
+        Gold -= price;
+        Arrows += amount;
+
+        Console.WriteLine($"{Name} купив {amount} стріл за {price} золота.");
+    }
+
+    // Метод виведення інформації
+    public void ShowInfo()
+    {
+        Console.WriteLine($"\n--- Мисливець: {Name} ---");
+        Console.WriteLine($"Здоров'я: {Health}");
+        Console.WriteLine($"Золото: {Gold}");
+        Console.WriteLine($"Стріли: {Arrows}");
+        Console.WriteLine($"Здобич: {Prey}");
+    }
+}
+
+class Competition
+{
+    private Hunter hunter1;
+    private Hunter hunter2;
+    private Random random = new Random();
+
+    public Competition(Hunter first, Hunter second)
+    {
+        hunter1 = first;
+        hunter2 = second;
+    }
+
+    // Запуск змагання
+    public void Start()
+    {
+        bool finished = false;
+
+        while (!finished)
+        {
+            Console.WriteLine("\n========== ЗМАГАННЯ МИСЛИВЦІВ ==========");
+            Console.WriteLine("1. Полювати");
+            Console.WriteLine("2. Купити стріли");
+            Console.WriteLine("3. Переглянути інформацію");
+            Console.WriteLine("4. Завершити змагання");
+            Console.Write("Ваш вибір: ");
+
+            string choice = Console.ReadLine() ?? "";
+
+            if (choice == "4")
+            {
+                finished = true;
+                continue;
+            }
+
+            Hunter selected = SelectHunter();
+
+            if (selected == null)
+                continue;
+
+            switch (choice)
+            {
+                case "1":
+                    selected.Hunt(random);
+                    break;
+
+                case "2":
+                    selected.BuyArrows();
+                    break;
+
+                case "3":
+                    selected.ShowInfo();
+                    break;
+
+                default:
+                    Console.WriteLine("Невірний пункт меню!");
+                    break;
+            }
+        }
+
+        ShowResults();
+    }
+
+    // Вибір мисливця
+    private Hunter SelectHunter()
+    {
+        Console.WriteLine("\nОберіть мисливця:");
+        Console.WriteLine($"1. {hunter1.Name}");
+        Console.WriteLine($"2. {hunter2.Name}");
+        Console.Write("Ваш вибір: ");
+
+        string choice = Console.ReadLine() ?? "";
+
+        if (choice == "1")
+            return hunter1;
+
+        if (choice == "2")
+            return hunter2;
+
+        Console.WriteLine("Невірний вибір мисливця!");
+        return null;
+    }
+
+    // Підсумки змагання
+    private void ShowResults()
+    {
+        Console.WriteLine("\n========== РЕЗУЛЬТАТИ ЗМАГАННЯ ==========");
+
+        hunter1.ShowInfo();
+        hunter2.ShowInfo();
+
+        Console.WriteLine("\n========== ПЕРЕМОЖЕЦЬ ==========");
+
+        if (hunter1.Prey > hunter2.Prey)
+        {
+            Console.WriteLine($"Переможець: {hunter1.Name}!");
+        }
+        else if (hunter2.Prey > hunter1.Prey)
+        {
+            Console.WriteLine($"Переможець: {hunter2.Name}!");
+        }
+        else
+        {
+            Console.WriteLine("Нічия! Обидва мисливці здобули однакову кількість здобичі.");
+        }
+    }
+}
+
+class Program
+{
+    static void Main()
+    {
+        // Створення двох незалежних мисливців
+        Hunter hunter1 = new Hunter("Артем", 100, 30, 5);
+        Hunter hunter2 = new Hunter("Максим", 100, 30, 5);
+
+        Console.WriteLine("========== ПОЧАТКОВИЙ СТАН ==========");
+
+        hunter1.ShowInfo();
+        hunter2.ShowInfo();
+
+        // Створення та запуск змагання
+        Competition competition = new Competition(hunter1, hunter2);
+        competition.Start();
+
+        Console.WriteLine("\nЗмагання завершено!");
+        Console.ReadKey();
+    }
+}
